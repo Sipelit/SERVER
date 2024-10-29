@@ -31,7 +31,7 @@ deleteUserTransaction(_id: ID): UserTransaction
 }
 `;
 
-const postResolvers = {
+const userTransactionResolvers = {
   Query: {
     getUserTransactions: async (_, args, contextValue) => {
       await contextValue.authentication();
@@ -84,4 +84,8 @@ const postResolvers = {
       return data;
     }
   },
+};
+module.exports = {
+  userTransactionTypeDefs,
+  userTransactionResolvers,
 };

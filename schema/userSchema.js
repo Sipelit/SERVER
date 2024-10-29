@@ -1,4 +1,4 @@
-const { db } = require("../config/mongoDB");
+const { db } = require("../config/mongodb");
 const { hashPass, comparePass } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
 const { isEmail } = require("validator");

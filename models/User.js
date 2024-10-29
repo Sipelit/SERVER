@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
-const { db } = require("../config/mongoDB");
+const { db } = require("../config/mongodb");
 
-const collection = db.collection("users");
+const collection = db.collection("sipelit");
 
 class User {
   static async register(newUser) {
