@@ -7,7 +7,7 @@ type Transaction {
   userTransaction: [User]
   name: String
   items: [Item]
-  catogory:String
+  categ:String
   tax: Int
   totalPrice: Int
   userId: ID
@@ -28,7 +28,7 @@ createTransaction(
     _id: ID
     name: String
     userId: ID
-    catogory:String
+    categ:String
     items: [ItemInput]
     totalPrice: Int
     tax: Int
@@ -36,7 +36,7 @@ createTransaction(
 updateTransaction(
     _id: ID
     name: String
-    catogory:String
+    categ:String
     tax: Int
     userId: ID
     items: [ItemInput]
@@ -56,13 +56,13 @@ quantity: Int
 const transactionResolvers = {
   Query: {
     getTransactions: async (_, args, contextValue) => {
-      // await contextValue.authentication();
+      await contextValue.authentication();
       const data = await Transaction.getTransactions();
 
       return data;
     },
     getTransactionById: async (_, args, contextValue) => {
-      // await contextValue.authentication();
+      await contextValue.authentication();
       const _id = args._id;
       const data = await Transaction.getTransactionById(_id);
       return;
@@ -74,12 +74,12 @@ const transactionResolvers = {
       await contextValue.authentication();
       
       
-      const { name, catogory, items, totalPrice, userId, tax } = args;
+      const { name, categ, items, totalPrice, userId, tax } = args;
     ;
      
       const data = await Transaction.createTransaction(
         {name,
-        catogory,
+        categ,
         items,
         totalPrice,
         userId,

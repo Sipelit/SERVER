@@ -28,7 +28,7 @@ startStandaloneServer(server, {
   listen: { port: process.env.PORT || 3000 },
   context: ({ req }) => {
     return {
-      auth: async () => {
+      authentication: async () => {
         const { authorization } = req.headers;
         console.log(authorization,"authorization");
 
