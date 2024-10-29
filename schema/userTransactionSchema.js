@@ -9,6 +9,11 @@ type UserTransaction {
   createdAt: String
   updatedAt: String
 }
+type Item {
+  name: String
+  price: Int
+  quantity: Int
+}
 type Query {
 getUserTransactions: [UserTransaction]
 getUserTransactionById(_id: ID): UserTransaction
@@ -17,19 +22,25 @@ type Mutation {
 createUserTransaction(
     _id: ID
     name: String
-    items: [Item]
+    items: [ItemInput]
     userId: ID
 ): UserTransaction
 updateUserTransaction(
     _id: ID
     name: String
-    items: [Item]
+    items: [ItemInput]
     totalPrice: Int
     userId: ID
 
 ): UserTransaction
 
 deleteUserTransaction(_id: ID): UserTransaction
+}
+
+input ItemInput {
+name: String
+price: Int
+quantity: Int
 }
 `;
 

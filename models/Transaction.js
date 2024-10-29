@@ -2,9 +2,8 @@
 const { ObjectId } = require("mongodb");
 const { db } = require("../config/mongodb");
 
-
 //variable
-const collection = db.collection("Transactions");
+const collection = db.collection("transactions");
 
 class Transaction {
   static async getTransactions() {
@@ -34,6 +33,8 @@ class Transaction {
       },
     ];
     const data = await collection.aggregate(pipeline).toArray();
+    
+    
     return data;
   }
 
@@ -43,17 +44,28 @@ class Transaction {
   }
 
   static async createTransaction(newTransaction) {
-    const { name, items, totalPrice, userId } = newTransaction;
+    const { name, catogory, items, totalPrice, userId, tax } = newTransaction;
+    console.log(newTransaction,"ini new transaction");
+    console.log(name, catogory, items, totalPrice, userId, tax);
+    
+    
     const data = {
       name,
+      catogory,
       items,
       totalPrice,
       userId: new ObjectId(userId),
+      tax,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     const result = await collection.insertOne(data);
-    return result;
+    console.log(result,"iniresult");
+    
+    return {
+      ...data,
+      _id: result.insertedId,
+    };
   }
 
   static async updateTransaction(_id, name, items, totalPrice) {

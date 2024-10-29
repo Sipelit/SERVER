@@ -1,19 +1,56 @@
-const { transactionTypeDefs, transactionResolvers } = require("./schema/transactionSchema");
+require("dotenv").config();
+const { ApolloServer } = require("@apollo/server");
+const { verifyToken } = require("./helpers/jwt");
+const {
+  transactionTypeDefs,
+  transactionResolvers,
+} = require("./schema/transactionSchema");
 const { userTypeDefs, userResolvers } = require("./schema/userSchema");
-const { userTransactionTypeDefs, userTransactionResolvers } = require("./schema/userTransactionSchema");
+const {
+  userTransactionTypeDefs,
+  userTransactionResolvers,
+} = require("./schema/userTransactionSchema");
+const { startStandaloneServer } = require("@apollo/server/standalone");
+const User = require("./models/user");
 
 // definition and your set of resolvers.
 const server = new ApolloServer({
-  typeDefs: [userTypeDefs, transactionTypeDefs,userTransactionTypeDefs],
+  typeDefs: [userTypeDefs, transactionTypeDefs, userTransactionTypeDefs],
   resolvers: [userResolvers, transactionResolvers, userTransactionResolvers],
+  introspection: true,
 });
 
 // Passing an ApolloServer instance to the `startStandaloneServer` function:
 //  1. creates an Express app
 //  2. installs your ApolloServer instance as middleware
 //  3. prepares your app to handle incoming requests
-const { url } = startStandaloneServer(server, {
-  listen: { port: 3000 },
-});
+startStandaloneServer(server, {
+  listen: { port: process.env.PORT || 3000 },
+  context: ({ req }) => {
+    return {
+      auth: async () => {
+        const { authorization } = req.headers;
+        console.log(authorization,"authorization");
 
-console.log(`🚀  Server ready at: ${url}`);
+        if (!authorization) {
+          throw new Error("Unauthorized");
+        }
+        const [type, token] = authorization.split(" ");
+        if (type !== "Bearer" || !type||!token) {
+          throw new Error("Unauthorized");
+        }
+        const payload = verifyToken(token);
+        console.log(payload,"payload");
+        
+        const user = await User.getUserById(payload.id);
+
+        if (!user) {
+          throw new Error("Unauthorized");
+        }  
+        return {user};
+      },
+    };
+  },
+}).then(({ url }) => {
+    console.log(`🚀  Server ready at: ${url}`);})
+

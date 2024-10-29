@@ -1,3 +1,4 @@
+const Transaction = require("../models/Transaction");
 const { updateTransaction } = require("../models/Transaction");
 
 const transactionTypeDefs = `#graphql
@@ -12,6 +13,11 @@ type Transaction {
   userId: ID
   createdAt: String
   updatedAt: String
+}
+type Item {
+  name: String
+  price: Int
+  quantity: Int
 }
 type Query {
 getTransactions: [Transaction]
@@ -50,12 +56,13 @@ quantity: Int
 const transactionResolvers = {
   Query: {
     getTransactions: async (_, args, contextValue) => {
-      await contextValue.authentication();
+      // await contextValue.authentication();
       const data = await Transaction.getTransactions();
+
       return data;
     },
     getTransactionById: async (_, args, contextValue) => {
-      await contextValue.authentication();
+      // await contextValue.authentication();
       const _id = args._id;
       const data = await Transaction.getTransactionById(_id);
       return;
@@ -64,23 +71,31 @@ const transactionResolvers = {
 
   Mutation: {
     createTransaction: async (_, args, contextValue) => {
-      await contextValue.authentication();
-      const { name, items, totalPrice, userId } = args;
+      // await contextValue.authentication();
+      
+      
+      const { name, catogory, items, totalPrice, userId, tax } = args;
+    ;
+     
       const data = await Transaction.createTransaction(
-        name,
+        {name,
+        catogory,
         items,
         totalPrice,
-        userId
+        userId,
+        tax}
       );
+      
+      
       return data;
     },
-  },
 
-  updateTransaction: async (_, args, contextValue) => {
-    await contextValue.authentication();
-    const { _id, items, totalPrice } = args;
-    const data = await Transaction.updateTransaction(_id, items, totalPrice);
-    return data;
+    updateTransaction: async (_, args, contextValue) => {
+      await contextValue.authentication();
+      const { _id, items, totalPrice } = args;
+      const data = await Transaction.updateTransaction(_id, items, totalPrice);
+      return data;
+    },
   },
 };
 module.exports = {

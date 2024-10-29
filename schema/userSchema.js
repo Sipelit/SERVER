@@ -1,9 +1,8 @@
 const { db } = require("../config/mongodb");
-const { hashPass, comparePass } = require("../helpers/bcrypt");
+const { hashPass, comparePass } = require("../helpers/bcrypt.js");
 const { signToken } = require("../helpers/jwt");
 const { isEmail } = require("validator");
 const jwt = require("jsonwebtoken");
-const Follow = require("../models/Follow");
 const User = require("../models/user");
 
 const userTypeDefs = `#graphql
@@ -52,41 +51,6 @@ const userResolvers = {
       const users = User.getUsers();
       return users;
     },
-    getUserById: async (_, args, contextValue) => {
-      await contextValue.authentication();
-      const userId = args._id;
-      console.log("🚀 ~ getUserById: ~ userId:", userId);
-
-      const data = await User.getUserById(userId);
-      data.followers = await Follow.getFollowers(userId);
-      data.followings = await Follow.getFollowing(userId);
-
-      if (!userId) {
-        throw new Error("USER NOT FOUND");
-      }
-
-      return data;
-    },
-    getUserByName: async (_, args, contextValue) => {
-      await contextValue.authentication();
-      const { name } = args;
-      const userName = await User.getUserByName(name);
-
-      if (!userName) {
-        throw new Error("USER NOT FOUND");
-      }
-      return userName;
-    },
-    getUserByUsername: async (_, args) => {
-      await contextValue.authentication();
-      const { username } = args;
-      const data = await User.getUserByUsername(username);
-
-      if (!data) {
-        throw new Error("USER NOT FOUND");
-      }
-      return data;
-    },
   },
   Mutation: {
     register: async (parent, args, contextValue, info) => {
@@ -126,6 +90,7 @@ const userResolvers = {
     login: async (_, args) => {
       const { username, password } = args;
 
+
       if (!username) {
         throw new Error("Username is required");
       }
@@ -134,18 +99,22 @@ const userResolvers = {
         throw new Error("Password is required");
       }
 
+      
+      
       const getUsername = await User.getUserByUsername(username);
-
       if (!getUsername) {
         throw new Error("Invalid username or password");
       }
-
+      
       const validPass = await comparePass(password, getUsername.password);
       if (!validPass) {
         throw new Error("Invalid username or password");
       }
-
+      console.log(validPass,"validPass",getUsername,"getUsername",);
+      
       const token = signToken({ _id: getUsername._id });
+      console.log(token,"initoken");
+      
 
       const form = {
         token,
