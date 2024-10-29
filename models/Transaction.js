@@ -44,14 +44,14 @@ class Transaction {
   }
 
   static async createTransaction(newTransaction) {
-    const { name, catogory, items, totalPrice, userId, tax } = newTransaction;
+    const { name, category, items, totalPrice, userId, tax } = newTransaction;
     console.log(newTransaction,"ini new transaction");
-    console.log(name, catogory, items, totalPrice, userId, tax);
+    console.log(name, category, items, totalPrice, userId, tax);
     
     
     const data = {
       name,
-      catogory,
+      category,
       items,
       totalPrice,
       userId: new ObjectId(userId),
