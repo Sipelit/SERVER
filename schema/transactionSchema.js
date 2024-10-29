@@ -83,3 +83,5 @@ const transactionResolvers = {
     return data;
   },
 };
+
+module.exports = { transactionTypeDefs, transactionResolvers };
