@@ -1,6 +1,7 @@
 //require
 const { ObjectId } = require("mongodb");
-const { db } = require("../config/mongoDB");
+const { db } = require("../config/mongodb");
+
 
 //variable
 const collection = db.collection("Transactions");
