@@ -15,6 +15,8 @@ getUserTransactionById(_id: ID): UserTransaction
 }
 type Mutation {
 createUserTransaction(
+    _id: ID
+    name: String
     items: [Item]
     userId: ID
 ): UserTransaction
@@ -82,6 +84,6 @@ const postResolvers = {
       }
       await UserTransaction.deleteUserTransaction(_id);
       return data;
-    }
+    },
   },
 };

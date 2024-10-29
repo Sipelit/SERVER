@@ -6,6 +6,8 @@ type Transaction {
   userTransaction: [User]
   name: String
   items: [Item]
+  catogory:String
+  tax: Int
   totalPrice: Int
   userId: ID
   createdAt: String
@@ -17,11 +19,20 @@ getTransactionById(_id: ID): Transaction
 }
 type Mutation {
 createTransaction(
+    _id: ID
     name: String
     userId: ID
+    catogory:String
+    items: [ItemInput]
+    totalPrice: Int
+    tax: Int
 ): Transaction
 updateTransaction(
     _id: ID
+    name: String
+    catogory:String
+    tax: Int
+    userId: ID
     items: [ItemInput]
     totalPrice: Int
    
@@ -33,11 +44,7 @@ name: String
 price: Int
 quantity: Int
 }
-input ItemInput {
-name: String
-price: Int
-quantity: Int
-}
+
 `;
 
 const transactionResolvers = {
@@ -72,11 +79,7 @@ const transactionResolvers = {
   updateTransaction: async (_, args, contextValue) => {
     await contextValue.authentication();
     const { _id, items, totalPrice } = args;
-    const data = await Transaction.updateTransaction(
-      _id,
-      items,
-      totalPrice
-    );
+    const data = await Transaction.updateTransaction(_id, items, totalPrice);
     return data;
-  }
+  },
 };
