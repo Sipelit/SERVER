@@ -30,7 +30,6 @@ startStandaloneServer(server, {
     return {
       authentication: async () => {
         const { authorization } = req.headers;
-        console.log(authorization,"authorization");
 
         if (!authorization) {
           throw new Error("Unauthorized");
@@ -40,9 +39,11 @@ startStandaloneServer(server, {
           throw new Error("Unauthorized");
         }
         const payload = verifyToken(token);
-        console.log(payload,"payload");
+      
         
-        const user = await User.getUserById(payload.id);
+        const user = await User.getUserById(payload._id);
+       
+        
 
         if (!user) {
           throw new Error("Unauthorized");

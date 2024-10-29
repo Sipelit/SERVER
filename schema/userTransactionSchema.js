@@ -1,7 +1,6 @@
 const userTransactionTypeDefs = `#graphql
 type UserTransaction {
   _id: ID
-  userTransaction: [User]
   name: String
   items: [Item]
   totalPrice: Int

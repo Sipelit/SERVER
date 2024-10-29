@@ -1,13 +1,13 @@
 const Transaction = require("../models/Transaction");
-const { updateTransaction } = require("../models/Transaction");
+
 
 const transactionTypeDefs = `#graphql
 type Transaction {
   _id: ID
-  userTransaction: [User]
+  userTransaction: [UserTransaction]
   name: String
   items: [Item]
-  categ:String
+  category:String
   tax: Int
   totalPrice: Int
   userId: ID
@@ -28,7 +28,7 @@ createTransaction(
     _id: ID
     name: String
     userId: ID
-    categ:String
+    category:String
     items: [ItemInput]
     totalPrice: Int
     tax: Int
@@ -36,7 +36,7 @@ createTransaction(
 updateTransaction(
     _id: ID
     name: String
-    categ:String
+    category:String
     tax: Int
     userId: ID
     items: [ItemInput]
@@ -74,12 +74,12 @@ const transactionResolvers = {
       await contextValue.authentication();
       
       
-      const { name, categ, items, totalPrice, userId, tax } = args;
+      const { name, category, items, totalPrice, userId, tax } = args;
     ;
      
       const data = await Transaction.createTransaction(
         {name,
-        categ,
+        category,
         items,
         totalPrice,
         userId,

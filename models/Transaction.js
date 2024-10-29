@@ -8,29 +8,29 @@ const collection = db.collection("transactions");
 class Transaction {
   static async getTransactions() {
     const pipeline = [
-      // {
-      //   $lookup: {
-      //     from: "users",
-      //     localField: "userId",
-      //     foreignField: "_id",
-      //     as: "transactionOfUser",
-      //   },
-      // },
-      // {
-      //   $unwind: {
-      //     path: "$transactionOfUser",
-      //   },
-      // },
-      // {
-      //   $project: {
-      //     "transactionOfUser.password": 0,
-      //   },
-      // },
-      // {
-      //   $sort: {
-      //     createdAt: 1,
-      //   },
-      // },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "transactionOfUser",
+        },
+      },
+      {
+        $unwind: {
+          path: "$transactionOfUser",
+        },
+      },
+      {
+        $project: {
+          "transactionOfUser.password": 0,
+        },
+      },
+      {
+        $sort: {
+          createdAt: 1,
+        },
+      },
     ];
     const data = await collection.aggregate(pipeline).toArray();
     
