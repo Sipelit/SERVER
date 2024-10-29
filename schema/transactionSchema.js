@@ -7,7 +7,7 @@ type Transaction {
   userTransaction: [User]
   name: String
   items: [Item]
-  catogory:String
+  category:String
   tax: Int
   totalPrice: Int
   userId: ID
@@ -28,7 +28,7 @@ createTransaction(
     _id: ID
     name: String
     userId: ID
-    catogory:String
+    category:String
     items: [ItemInput]
     totalPrice: Int
     tax: Int
@@ -36,7 +36,7 @@ createTransaction(
 updateTransaction(
     _id: ID
     name: String
-    catogory:String
+    category:String
     tax: Int
     userId: ID
     items: [ItemInput]
@@ -74,12 +74,12 @@ const transactionResolvers = {
       // await contextValue.authentication();
       
       
-      const { name, catogory, items, totalPrice, userId, tax } = args;
+      const { name, category, items, totalPrice, userId, tax } = args;
     ;
      
       const data = await Transaction.createTransaction(
         {name,
-        catogory,
+        category,
         items,
         totalPrice,
         userId,
