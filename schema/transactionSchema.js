@@ -71,7 +71,7 @@ const transactionResolvers = {
 
   Mutation: {
     createTransaction: async (_, args, contextValue) => {
-      // await contextValue.authentication();
+      await contextValue.authentication();
       
       
       const { name, catogory, items, totalPrice, userId, tax } = args;
