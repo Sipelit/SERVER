@@ -1,3 +1,5 @@
+const UserTransaction = require("../models/UserTransaction");
+
 const userTransactionTypeDefs = `#graphql
 type UserTransaction {
   _id: ID

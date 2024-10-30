@@ -1,5 +1,10 @@
+const { db } = require("../config/mongodb");
+const collection = db.collection("UserTransaction");
+
 class UserTransaction {
-   static async getUserTransaction(userId) {
+
+  
+   static async getUserTransactionById(userId) {
     const data = await collection.findOne({ userId: new ObjectId(userId) });
     return data;
   }
@@ -41,29 +46,30 @@ class UserTransaction {
   }
   static async getUserTransactions() {
     const pipeline = [
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "userTransaction",
-        },
-      },
-      {
-        $unwind: "$userTransaction",
-      },
-      {
-        $project: {
-          "userTransaction.password": 0,
-        },
-      },
-      {
-        $sort: {
-          createdAt: 1,
-        },
-      },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "userId",
+      //     foreignField: "_id",
+      //     as: "userTransaction",
+      //   },
+      // },
+      // {
+      //   $unwind: "$userTransaction",
+      // },
+      // {
+      //   $project: {
+      //     "userTransaction.password": 0,
+      //   },
+      // },
+      // {
+      //   $sort: {
+      //     createdAt: 1,
+      //   },
+      // },
     ];
     const data = await collection.aggregate(pipeline).toArray();
     return data;
   }
 }
+module.exports = UserTransaction
