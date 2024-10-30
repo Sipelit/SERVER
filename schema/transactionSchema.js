@@ -1,3 +1,4 @@
+const redis = require("../config/redis");
 const Transaction = require("../models/Transaction");
 
 
@@ -52,13 +53,15 @@ quantity: Int
 }
 
 `;
+const CACHE_POST = "cache:posts";
 
 const transactionResolvers = {
   Query: {
     getTransactions: async (_, args, contextValue) => {
       await contextValue.authentication();
+      const cache = await redis.get(CACHE_POST);
       const data = await Transaction.getTransactions();
-
+      await redis.set(CACHE_POST, JSON.stringify(posts));
       return data;
     },
     getTransactionById: async (_, args, contextValue) => {
@@ -86,7 +89,7 @@ const transactionResolvers = {
         tax}
       );
       
-      
+      await redis.del(CACHE_POST);
       return data;
     },
 
