@@ -61,11 +61,15 @@ const userTransactionResolvers = {
   Mutation: {
     createUserTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
-      const { items, userId } = args;
-      const newUserTransaction = { items, userId };
-      const data = await UserTransaction.createUserTransaction(
-        newUserTransaction
-      );
+      const { items, userId, totalPrice } = args;
+
+      const data = await UserTransaction.createUserTransaction({
+        items,
+        userId,
+        totalPrice,
+      });
+      console.log(data, "dataUt");
+
       return data;
     },
     updateUserTransaction: async (_, args, contextValue) => {

@@ -48,7 +48,7 @@ const userResolvers = {
     getUsers: async (_, args, contextValue) => {
       await contextValue.authentication();
 
-      const users = User.getUsers();
+      const users = await User.getUsers();
       return users;
     },
   },
@@ -110,10 +110,10 @@ const userResolvers = {
       if (!validPass) {
         throw new Error("Invalid username or password");
       }
-      console.log(validPass,"validPass",getUsername,"getUsername",);
+      
       
       const token = signToken({ _id: getUsername._id });
-      console.log(token,"initoken");
+      
       
 
       const form = {

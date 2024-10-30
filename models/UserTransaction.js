@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { db } = require("../config/mongodb");
 const collection = db.collection("UserTransaction");
 
@@ -17,7 +18,12 @@ class UserTransaction {
       totalPrice,
     };
     const result = await collection.insertOne(data);
-    return result;
+    
+    
+    return {
+      ...data,
+      _id: result.insertedId,
+    };
   }
 
 
