@@ -35,6 +35,7 @@ class Transaction {
     const data = await collection.aggregate(pipeline).toArray();
     
     
+    
     return data;
   }
 
@@ -45,9 +46,6 @@ class Transaction {
 
   static async createTransaction(newTransaction) {
     const { name, category, items, totalPrice, userId, tax } = newTransaction;
-    console.log(newTransaction,"ini new transaction");
-    console.log(name, category, items, totalPrice, userId, tax);
-    
     
     const data = {
       name,
@@ -69,16 +67,13 @@ class Transaction {
   }
 
   static async updateTransaction(_id, name, items, totalPrice) {
-    const data = await collection.updateMany(
-      { _id },
-      {
-        $set: {
-          name: name,
-          items: items,
-          totalPrice: totalPrice,
-        },
-      }
+    
+    const data = await collection.updateOne(
+      {_id},
+      
     );
+    console.log(data,"inidata");
+    
     return data;
   }
 

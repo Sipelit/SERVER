@@ -1,7 +1,6 @@
 const redis = require("../config/redis");
 const Transaction = require("../models/Transaction");
 
-
 const transactionTypeDefs = `#graphql
 type Transaction {
   _id: ID
@@ -60,8 +59,13 @@ const transactionResolvers = {
     getTransactions: async (_, args, contextValue) => {
       await contextValue.authentication();
       const cache = await redis.get(CACHE_POST);
+      if (cache) {
+        return JSON.parse(cache);
+      }
       const data = await Transaction.getTransactions();
-      await redis.set(CACHE_POST, JSON.stringify(posts));
+      console.log(data);
+
+      await redis.set(CACHE_POST, JSON.stringify(data));
       return data;
     },
     getTransactionById: async (_, args, contextValue) => {
@@ -75,20 +79,17 @@ const transactionResolvers = {
   Mutation: {
     createTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
-      
-      
+
       const { name, category, items, totalPrice, userId, tax } = args;
-    ;
-     
-      const data = await Transaction.createTransaction(
-        {name,
+      const data = await Transaction.createTransaction({
+        name,
         category,
         items,
         totalPrice,
         userId,
-        tax}
-      );
-      
+        tax,
+      });
+
       await redis.del(CACHE_POST);
       return data;
     },
