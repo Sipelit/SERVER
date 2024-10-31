@@ -66,15 +66,23 @@ class Transaction {
     };
   }
 
-  static async updateTransaction(_id, name, items, totalPrice) {
+  static async updateTransaction(_id,name, items, totalPrice) {
     
     const data = await collection.updateOne(
-      {_id},
-      
+      {_id:new ObjectId(String(_id))},{
+        $set: {
+          name,
+          items,
+          totalPrice,
+        },
+      }
+
     );
-    console.log(data,"inidata");
     
-    return data;
+    const update = await collection.findOne({ _id: new ObjectId(String(_id)) });
+   
+    
+    return update;
   }
 
   static async deleteTransaction(_id) {

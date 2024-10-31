@@ -96,8 +96,11 @@ const transactionResolvers = {
 
     updateTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
-      const { _id, items, totalPrice } = args;
-      const data = await Transaction.updateTransaction(_id, items, totalPrice);
+    
+      
+      const { _id,name, items, totalPrice } = args;
+      const data = await Transaction.updateTransaction(_id,name, items, totalPrice);
+      
       return data;
     },
   },
