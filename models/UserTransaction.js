@@ -3,14 +3,12 @@ const { db } = require("../config/mongodb");
 const collection = db.collection("UserTransaction");
 
 class UserTransaction {
-
-  
-   static async getUserTransactionById(userId) {
+  static async getUserTransactionById(userId) {
     const data = await collection.findOne({ userId: new ObjectId(userId) });
     return data;
   }
 
-  static  async createUserTransaction(newUserTransaction) {
+  static async createUserTransaction(newUserTransaction) {
     const { userId, items, totalPrice } = newUserTransaction;
     const data = {
       userId: new ObjectId(userId),
@@ -18,22 +16,14 @@ class UserTransaction {
       totalPrice,
     };
     const result = await collection.insertOne(data);
-    
-    
+
     return {
       ...data,
       _id: result.insertedId,
     };
   }
 
-
-  static async updateUserTransaction(
-    _id,
-    name,
-    items,
-    totalPrice,
-    userId
-  ) {
+  static async updateUserTransaction(_id, name, items, totalPrice, userId) {
     const data = {
       name,
       items,
@@ -50,32 +40,33 @@ class UserTransaction {
     const result = await collection.deleteOne({ _id: new ObjectId(_id) });
     return result;
   }
-  static async getUserTransactions() {
+  static async getUserTransactionsbytransactionId(transactionId) {
     const pipeline = [
-      // {
-      //   $lookup: {
-      //     from: "users",
-      //     localField: "userId",
-      //     foreignField: "_id",
-      //     as: "userTransaction",
-      //   },
-      // },
-      // {
-      //   $unwind: "$userTransaction",
-      // },
-      // {
-      //   $project: {
-      //     "userTransaction.password": 0,
-      //   },
-      // },
-      // {
-      //   $sort: {
-      //     createdAt: 1,
-      //   },
-      // },
+      { $match: { transactionId: new ObjectId(transactionId) } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userTransaction",
+        },
+      },
+      {
+        $unwind: "$userTransaction",
+      },
+      {
+        $project: {
+          "userTransaction.password": 0,
+        },
+      },
+      {
+        $sort: {
+          createdAt: 1,
+        },
+      },
     ];
     const data = await collection.aggregate(pipeline).toArray();
     return data;
   }
 }
-module.exports = UserTransaction
+module.exports = UserTransaction;

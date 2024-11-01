@@ -3,7 +3,8 @@ const { hashPass, comparePass } = require("../helpers/bcrypt.js");
 const { signToken } = require("../helpers/jwt");
 const { isEmail } = require("validator");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../models/User.js");
+
 
 const userTypeDefs = `#graphql
   type User {
@@ -51,6 +52,13 @@ const userResolvers = {
       const users = await User.getUsers();
       return users;
     },
+    getUserById: async (_, args, contextValue) => {
+      await contextValue.authentication();
+        const _id = args._id;       
+
+        const user = await User.getUserById(_id);
+        return user;    
+    }
   },
   Mutation: {
     register: async (parent, args, contextValue, info) => {

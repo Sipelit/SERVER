@@ -9,7 +9,7 @@ type Transaction {
   items: [Item]
   category:String
   tax: Int
-  totalPrice: Int
+  totalPrice: Float
   userId: ID
   createdAt: String
   updatedAt: String
@@ -18,10 +18,12 @@ type Item {
   name: String
   price: Int
   quantity: Int
+  totalPrice: Int
 }
 type Query {
 getTransactions: [Transaction]
-getTransactionById(_id: ID): Transaction
+getTransactionById(_id: ID): Transaction 
+
 }
 type Mutation {
 createTransaction(
@@ -30,7 +32,7 @@ createTransaction(
     userId: ID
     category:String
     items: [ItemInput]
-    totalPrice: Int
+    totalPrice: Float
     tax: Int
 ): Transaction
 updateTransaction(
@@ -40,7 +42,7 @@ updateTransaction(
     tax: Int
     userId: ID
     items: [ItemInput]
-    totalPrice: Int
+    totalPrice: Float
    
 ): Transaction
 }
@@ -49,6 +51,7 @@ input ItemInput {
 name: String
 price: Int
 quantity: Int
+totalPrice: Float
 }
 
 `;
@@ -57,13 +60,13 @@ const CACHE_POST = "cache:posts";
 const transactionResolvers = {
   Query: {
     getTransactions: async (_, args, contextValue) => {
-      await contextValue.authentication();
+      await contextValue.authentication();  
       const cache = await redis.get(CACHE_POST);
       if (cache) {
         return JSON.parse(cache);
       }
       const data = await Transaction.getTransactions();
-      console.log(data);
+    
 
       await redis.set(CACHE_POST, JSON.stringify(data));
       return data;
@@ -72,21 +75,22 @@ const transactionResolvers = {
       await contextValue.authentication();
       const _id = args._id;
       const data = await Transaction.getTransactionById(_id);
-      return;
+      return data
     },
+ 
   },
 
   Mutation: {
     createTransaction: async (_, args, contextValue) => {
-      await contextValue.authentication();
+     const {user} = await contextValue.authentication();
 
-      const { name, category, items, totalPrice, userId, tax } = args;
+      const { name, category, items, totalPrice, tax } = args;
       const data = await Transaction.createTransaction({
         name,
         category,
         items,
         totalPrice,
-        userId,
+        userId: user._id,
         tax,
       });
 
@@ -98,8 +102,8 @@ const transactionResolvers = {
       await contextValue.authentication();
     
       
-      const { _id,name, items, totalPrice } = args;
-      const data = await Transaction.updateTransaction(_id,name, items, totalPrice);
+      const { _id,name, items, totalPrice,catagory } = args;
+      const data = await Transaction.updateTransaction(_id,name, items, totalPrice,catagory);
       
       return data;
     },

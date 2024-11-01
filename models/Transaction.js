@@ -1,6 +1,7 @@
 //require
 const { ObjectId } = require("mongodb");
 const { db } = require("../config/mongodb");
+const UserTransaction = require("./UserTransaction");
 
 //variable
 const collection = db.collection("transactions");
@@ -40,8 +41,12 @@ class Transaction {
   }
 
   static async getTransactionById(_id) {
-    const data = await collection.findOne({ _id: new ObjectId(String(_id)) });
-    return data;
+    const transaction = await collection.findOne({ _id: new ObjectId(String(_id)) });
+    transaction.userTransaction = await UserTransaction.getUserTransactionsbytransactionId(transaction._id);
+
+    console.log(transaction,"iniresul t");
+    
+    return transaction;
   }
 
   static async createTransaction(newTransaction) {
@@ -66,13 +71,14 @@ class Transaction {
     };
   }
 
-  static async updateTransaction(_id,name, items, totalPrice) {
+  static async updateTransaction(_id,name, items, totalPrice,catagory) {
     
     const data = await collection.updateOne(
       {_id:new ObjectId(String(_id))},{
         $set: {
           name,
           items,
+          catagory,
           totalPrice,
         },
       }
@@ -84,6 +90,8 @@ class Transaction {
     
     return update;
   }
+
+ 
 
   static async deleteTransaction(_id) {
     const data = await collection.deleteOne({ _id: new ObjectId(String(_id)) });
