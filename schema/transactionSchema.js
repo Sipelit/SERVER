@@ -10,7 +10,7 @@ type Transaction {
   items: [Item]
   category:String
   tax: Int
-  totalPrice: Int
+  totalPrice: Float
   userId: ID
   createdAt: String
   updatedAt: String
@@ -61,7 +61,7 @@ const transactionResolvers = {
       await contextValue.authentication();
       const cache = await redis.get(CACHE_POST);
       const data = await Transaction.getTransactions();
-      await redis.set(CACHE_POST, JSON.stringify(posts));
+      await redis.set(CACHE_POST, JSON.stringify(data));
       return data;
     },
     getTransactionById: async (_, args, contextValue) => {

@@ -8,29 +8,29 @@ const collection = db.collection("transactions");
 class Transaction {
   static async getTransactions() {
     const pipeline = [
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "transactionOfUser",
-        },
-      },
-      {
-        $unwind: {
-          path: "$transactionOfUser",
-        },
-      },
-      {
-        $project: {
-          "transactionOfUser.password": 0,
-        },
-      },
-      {
-        $sort: {
-          createdAt: 1,
-        },
-      },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "userId",
+      //     foreignField: "_id",
+      //     as: "transactionOfUser",
+      //   },
+      // },
+      // {
+      //   $unwind: {
+      //     path: "$transactionOfUser",
+      //   },
+      // },
+      // {
+      //   $project: {
+      //     "transactionOfUser.password": 0,
+      //   },
+      // },
+      // {
+      //   $sort: {
+      //     createdAt: 1,
+      //   },
+      // },
     ];
     const data = await collection.aggregate(pipeline).toArray();
     
@@ -45,8 +45,7 @@ class Transaction {
 
   static async createTransaction(newTransaction) {
     const { name, category, items, totalPrice, userId, tax } = newTransaction;
-    console.log(newTransaction,"ini new transaction");
-    console.log(name, category, items, totalPrice, userId, tax);
+
     
     
     const data = {
@@ -60,7 +59,6 @@ class Transaction {
       updatedAt: new Date().toISOString(),
     };
     const result = await collection.insertOne(data);
-    console.log(result,"iniresult");
     
     return {
       ...data,
@@ -84,7 +82,6 @@ class Transaction {
 
   static async deleteTransaction(_id) {
     const data = await collection.deleteOne({ _id: new ObjectId(String(_id)) });
-    // console.log("🚀 ~ Transaction ~ deleteTransaction ~ data:", data);
 
     if (data.deletedCount === 0) {
       throw new Error("Transaction NOT FOUND");

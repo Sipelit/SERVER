@@ -68,7 +68,6 @@ const userTransactionResolvers = {
         userId,
         totalPrice,
       });
-      console.log(data, "dataUt");
 
       return data;
     },
