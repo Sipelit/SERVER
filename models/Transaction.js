@@ -9,11 +9,11 @@ const collection = db.collection("transactions");
 class Transaction {
   static async getTransactions() {
     const pipeline = [
+      { $match: { _id: new ObjectId(String(_id)) } },
       // {
       //   $lookup: {
       //     from: "users",
       //     localField: "userId",
-      
       //     foreignField: "_id",
       //     as: "transactionOfUser",
       //   },
@@ -28,31 +28,30 @@ class Transaction {
       //     "transactionOfUser.password": 0,
       //   },
       // },
-      // {
-      //   $sort: {
-      //     createdAt: 1,
-      //   },
-      // },
+      {
+        $sort: {
+          createdAt: 0,
+        },
+      },
     ];
     const data = await collection.aggregate(pipeline).toArray();
-    
-    
-    
+
     return data;
   }
 
   static async getTransactionById(_id) {
-    const transaction = await collection.findOne({ _id: new ObjectId(String(_id)) });
-    transaction.userTransaction = await UserTransaction.getUserTransactionsbytransactionId(transaction._id);
+    const transaction = await collection.findOne({
+      _id: new ObjectId(String(_id)),
+    });
+    transaction.userTransaction =
+      await UserTransaction.getUserTransactionsbytransactionId(transaction._id);
 
-    console.log(transaction,"iniresul t");
-    
     return transaction;
   }
 
   static async createTransaction(newTransaction) {
     const { name, category, items, totalPrice, userId, tax } = newTransaction;
-    
+
     const data = {
       name,
       category,
@@ -64,17 +63,17 @@ class Transaction {
       updatedAt: new Date().toISOString(),
     };
     const result = await collection.insertOne(data);
-    
+
     return {
       ...data,
       _id: result.insertedId,
     };
   }
 
-  static async updateTransaction(_id,name, items, totalPrice,catagory) {
-    
+  static async updateTransaction(_id, name, items, totalPrice, catagory) {
     const data = await collection.updateOne(
-      {_id:new ObjectId(String(_id))},{
+      { _id: new ObjectId(String(_id)) },
+      {
         $set: {
           name,
           items,
@@ -82,16 +81,12 @@ class Transaction {
           totalPrice,
         },
       }
-
     );
-    
+
     const update = await collection.findOne({ _id: new ObjectId(String(_id)) });
-   
-    
+
     return update;
   }
-
- 
 
   static async deleteTransaction(_id) {
     const data = await collection.deleteOne({ _id: new ObjectId(String(_id)) });
@@ -99,6 +94,27 @@ class Transaction {
     if (data.deletedCount === 0) {
       throw new Error("Transaction NOT FOUND");
     }
+    return data;
+  }
+
+  static async getrecipe(userId) {
+    const pipeline = [
+      { $match: { transactionId: new ObjectId(transactionId) } },
+      {
+        $lookup: {
+          from: "UserTransaction",
+          localField: "transactionId",
+          foreignField: "_id",
+          as: "usersTransactions",
+        },
+      },
+      {
+        $unwind: {
+          path: "$usersTransactions",
+        },
+      },
+    ];
+    const data = await collection.findOne({ userId: new ObjectId(userId) });
     return data;
   }
 }

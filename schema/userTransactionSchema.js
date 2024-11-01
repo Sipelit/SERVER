@@ -1,3 +1,4 @@
+const { ReturnDocument } = require("mongodb");
 const UserTransaction = require("../models/UserTransaction");
 
 const userTransactionTypeDefs = `#graphql
@@ -16,6 +17,7 @@ type Item {
   price: Int
   quantity: Int
 }
+
 type Query {
 getUserTransactions: [UserTransaction]
 getUserTransactionById(_id: ID): UserTransaction
@@ -28,6 +30,9 @@ createUserTransaction(
     transactionId:ID
     userId: ID
 ): UserTransaction
+createUserTransactionMany(
+    userTransactions: [UserTransactionInput]
+): String
 updateUserTransaction(
     _id: ID
     name: String
@@ -39,6 +44,13 @@ updateUserTransaction(
 ): UserTransaction
 
 deleteUserTransaction(_id: ID): UserTransaction
+}
+input UserTransactionInput {
+name: String
+items: [ItemInput]
+totalPrice: Float
+transactionId:ID
+userId: String
 }
 
 input ItemInput {
@@ -64,17 +76,41 @@ const userTransactionResolvers = {
   Mutation: {
     createUserTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
-      const { items, userId,transactionId, totalPrice } = args;
+      const { items, userId, transactionId, totalPrice } = args;
 
-      const data = await UserTransaction.createUserTransaction({
-        items,
-        userId,
-        transactionId,
-        totalPrice,
-      });
+      try {
+        const data = await UserTransaction.createUserTransaction({
+          items,
+          userId,
+          transactionId,
+          totalPrice,
+        });
 
-      return data;
+        return data;
+      } catch (error) {
+        console.error("Error creating user transaction:", error);
+        throw new Error("Failed to create user transaction");
+      }
     },
+    createUserTransactionMany: async (_, args, contextValue) => {
+      await contextValue.authentication();
+      const { userTransactions } = args;
+  
+      if (!Array.isArray(userTransactions)) {
+          throw new Error("userTransactions must be an array");
+      }
+  // console.log(userTransactions, "userTransactions");
+  
+       await UserTransaction.createManyUserTransaction(userTransactions);
+
+ 
+  
+      // Ensure that the return value is iterable
+      return "Succesfully Created"  // Wrap in array if not already
+
+  },
+  
+   
     updateUserTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
       const { _id, name, items, totalPrice, userId } = args;

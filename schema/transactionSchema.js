@@ -21,8 +21,9 @@ type Item {
   totalPrice: Int
 }
 type Query {
-getTransactions: [Transaction]
+getTransactions(userId:ID): [Transaction]
 getTransactionById(_id: ID): Transaction 
+getrecipe(_id: ID): Transaction
 
 }
 type Mutation {
@@ -60,13 +61,12 @@ const CACHE_POST = "cache:posts";
 const transactionResolvers = {
   Query: {
     getTransactions: async (_, args, contextValue) => {
-      await contextValue.authentication();  
+      await contextValue.authentication();
       const cache = await redis.get(CACHE_POST);
       if (cache) {
         return JSON.parse(cache);
       }
-      const data = await Transaction.getTransactions();
-    
+      const data = await Transaction.getTransactions(args.userId);
 
       await redis.set(CACHE_POST, JSON.stringify(data));
       return data;
@@ -75,14 +75,19 @@ const transactionResolvers = {
       await contextValue.authentication();
       const _id = args._id;
       const data = await Transaction.getTransactionById(_id);
-      return data
+      return data;
     },
- 
+    getrecipe: async (_, args, contextValue) => {
+      await contextValue.authentication();
+      const _id = args._id;
+      const data = await Transaction.getTransactionById(_id);
+      return data;
+    },
   },
 
   Mutation: {
     createTransaction: async (_, args, contextValue) => {
-     const {user} = await contextValue.authentication();
+      const { user } = await contextValue.authentication();
 
       const { name, category, items, totalPrice, tax } = args;
       const data = await Transaction.createTransaction({
@@ -100,11 +105,16 @@ const transactionResolvers = {
 
     updateTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
-    
-      
-      const { _id,name, items, totalPrice,catagory } = args;
-      const data = await Transaction.updateTransaction(_id,name, items, totalPrice,catagory);
-      
+
+      const { _id, name, items, totalPrice, catagory } = args;
+      const data = await Transaction.updateTransaction(
+        _id,
+        name,
+        items,
+        totalPrice,
+        catagory
+      );
+
       return data;
     },
   },
