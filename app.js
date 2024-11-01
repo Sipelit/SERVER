@@ -11,7 +11,7 @@ const {
   userTransactionResolvers,
 } = require("./schema/userTransactionSchema");
 const { startStandaloneServer } = require("@apollo/server/standalone");
-const User = require("./models/user");
+const User = require("./models/User");
 
 // definition and your set of resolvers.
 const server = new ApolloServer({
