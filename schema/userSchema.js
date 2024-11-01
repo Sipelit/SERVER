@@ -121,10 +121,11 @@ const userResolvers = {
       const form = {
         token,
         _id: getUsername._id,
-        username: getUsername.username, 
+        username: getUsername.username,
       };
       await User.login(getUsername);
-      return {...form};
+
+      return { ...form };
     },
   },
 };
