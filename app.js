@@ -35,23 +35,20 @@ startStandaloneServer(server, {
           throw new Error("Unauthorized");
         }
         const [type, token] = authorization.split(" ");
-        if (type !== "Bearer" || !type||!token) {
+        if (type !== "Bearer" || !type || !token) {
           throw new Error("Unauthorized");
         }
         const payload = verifyToken(token);
-      
-        
+
         const user = await User.getUserById(payload._id);
-       
-        
 
         if (!user) {
           throw new Error("Unauthorized");
-        }  
-        return {user};
+        }
+        return { user };
       },
     };
   },
 }).then(({ url }) => {
-    console.log(`🚀  Server ready at: ${url}`);})
-
+  console.log(`🚀  Server ready at: ${url}`);
+});

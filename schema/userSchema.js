@@ -5,7 +5,6 @@ const { isEmail } = require("validator");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.js");
 
-
 const userTypeDefs = `#graphql
   type User {
     _id:ID
@@ -25,6 +24,7 @@ const userTypeDefs = `#graphql
 
   type responseLogin{
   token:String
+  _id: ID
   username:String
 }
   type Mutation {
@@ -54,11 +54,11 @@ const userResolvers = {
     },
     getUserById: async (_, args, contextValue) => {
       await contextValue.authentication();
-        const _id = args._id;       
+      const _id = args._id;
 
-        const user = await User.getUserById(_id);
-        return user;    
-    }
+      const user = await User.getUserById(_id);
+      return user;
+    },
   },
   Mutation: {
     register: async (parent, args, contextValue, info) => {
@@ -98,7 +98,6 @@ const userResolvers = {
     login: async (_, args) => {
       const { username, password } = args;
 
-
       if (!username) {
         throw new Error("Username is required");
       }
@@ -107,29 +106,25 @@ const userResolvers = {
         throw new Error("Password is required");
       }
 
-      
-      
       const getUsername = await User.getUserByUsername(username);
       if (!getUsername) {
         throw new Error("Invalid username or password");
       }
-      
+
       const validPass = await comparePass(password, getUsername.password);
       if (!validPass) {
         throw new Error("Invalid username or password");
       }
-      
-      
+
       const token = signToken({ _id: getUsername._id });
-      
-      
 
       const form = {
         token,
-        username: getUsername.username,
+        _id: getUsername._id,
+        username: getUsername.username, 
       };
       await User.login(getUsername);
-      return form;
+      return {...form};
     },
   },
 };
