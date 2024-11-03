@@ -115,7 +115,6 @@ class Transaction {
       },
     ];
     const data = await collection.aggregate(pipeline).toArray();
-    console.log(data,"da ");
     
     return data;
   }
