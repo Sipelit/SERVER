@@ -97,7 +97,7 @@ class Transaction {
     return data;
   }
 
-  static async getrecipe(userId) {
+  static async getrecipe(transactionId) {
     const pipeline = [
       { $match: { transactionId: new ObjectId(transactionId) } },
       {
@@ -114,7 +114,9 @@ class Transaction {
         },
       },
     ];
-    const data = await collection.findOne({ userId: new ObjectId(userId) });
+    const data = await collection.aggregate(pipeline).toArray();
+    console.log(data,"da ");
+    
     return data;
   }
 }

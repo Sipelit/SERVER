@@ -16,7 +16,7 @@ type Transaction {
 }
 type Item {
   name: String
-  price: Int
+  price: Float
   quantity: Int
   totalPrice: Int
 }
@@ -49,8 +49,8 @@ updateTransaction(
 }
 
 input ItemInput {
-name: String
-price: Int
+name: String!
+price: Float
 quantity: Int
 totalPrice: Float
 }
@@ -80,7 +80,11 @@ const transactionResolvers = {
     getrecipe: async (_, args, contextValue) => {
       await contextValue.authentication();
       const _id = args._id;
-      const data = await Transaction.getTransactionById(_id);
+      console.log(args._id, "args");
+
+      const data = await Transaction.getrecipe(_id);
+      // console.log(data,"xhema");
+
       return data;
     },
   },
@@ -90,6 +94,14 @@ const transactionResolvers = {
       const { user } = await contextValue.authentication();
 
       const { name, category, items, totalPrice, tax } = args;
+      if (!name) throw new Error("Transaction name is required.");
+      if (!category) throw new Error("Category is required.");
+      if (!Array.isArray(items) || items.length === 0) {
+        throw new Error("At least one item is required.");
+      }
+      if (totalPrice === undefined || totalPrice <= 0) {
+        throw new Error("Total price must be a positive number.");
+      }
       const data = await Transaction.createTransaction({
         name,
         category,

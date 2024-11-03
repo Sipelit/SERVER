@@ -14,7 +14,7 @@ type UserTransaction {
 }
 type Item {
   name: String
-  price: Int
+  price: Float
   quantity: Int
 }
 
@@ -54,9 +54,9 @@ userId: String
 }
 
 input ItemInput {
-name: String
-price: Int
-quantity: Int
+name: String!
+price: Float!
+quantity: Int!
 }
 `;
 
