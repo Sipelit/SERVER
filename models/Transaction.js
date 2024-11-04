@@ -7,9 +7,9 @@ const UserTransaction = require("./UserTransaction");
 const collection = db.collection("transactions");
 
 class Transaction {
-  static async getTransactions() {
+  static async getTransactions(userId) {
     const pipeline = [
-      { $match: { _id: new ObjectId(String(_id)) } },
+      { $match: { userId: new ObjectId(userId) } },
       // {
       //   $lookup: {
       //     from: "users",
@@ -30,7 +30,7 @@ class Transaction {
       // },
       {
         $sort: {
-          createdAt: 0,
+          createdAt: -1,
         },
       },
     ];

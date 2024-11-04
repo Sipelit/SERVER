@@ -66,6 +66,7 @@ const transactionResolvers = {
       if (cache) {
         return JSON.parse(cache);
       }
+      
       const data = await Transaction.getTransactions(args.userId);
 
       await redis.set(CACHE_POST, JSON.stringify(data));
