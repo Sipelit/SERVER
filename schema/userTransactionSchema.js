@@ -1,4 +1,4 @@
-const { ReturnDocument } = require("mongodb");
+
 const UserTransaction = require("../models/UserTransaction");
 
 const userTransactionTypeDefs = `#graphql
