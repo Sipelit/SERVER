@@ -90,7 +90,6 @@ const transactionResolvers = {
     getReceipt: async (_, args, contextValue) => {
       await contextValue.authentication();
       const _id = args._id;
-      console.log(args._id, "args");
 
       const data = await Transaction.getReceipt(_id);
 

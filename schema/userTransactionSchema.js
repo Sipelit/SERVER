@@ -98,12 +98,10 @@ const userTransactionResolvers = {
       if (!Array.isArray(userTransactions)) {
         throw new Error("userTransactions must be an array");
       }
-      // console.log(userTransactions, "userTransactions");
 
       await UserTransaction.createManyUserTransaction(userTransactions);
 
-      // Ensure that the return value is iterable
-      return "Succesfully Created"; // Wrap in array if not already
+      return "Succesfully Created";
     },
 
     updateUserTransaction: async (_, args, contextValue) => {

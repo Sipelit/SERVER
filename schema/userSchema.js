@@ -20,6 +20,7 @@ const userTypeDefs = `#graphql
     getUserById(_id: ID): User
     getUserByName(name: String): User
     getUserByUsername(username: String!): User
+    getUserByEmail(email: String!): User
   }
 
   type responseLogin{
@@ -71,7 +72,7 @@ const userResolvers = {
       if (!username) {
         throw new Error("Username is required");
       }
-      const getUsername = await User.getUserByInput(username);
+      const getUsername = await User.getUserByUsername(username);
       if (getUsername) throw new Error("Username already exists");
 
       if (!email) {
@@ -82,7 +83,7 @@ const userResolvers = {
         throw new Error("Email is invalid");
       }
 
-      const getEmail = await User.getUserByInput(username);
+      const getEmail = await User.getUserByEmail(email);
       if (getEmail) throw new Error("Email already exists");
 
       if (!password) {
@@ -111,7 +112,7 @@ const userResolvers = {
         throw new Error("Password is required");
       }
 
-      const getUsername = await User.getUserByInput(username);
+      const getUsername = await User.getUserByUsername(username);
       if (!getUsername) {
         throw new Error("Invalid username or password");
       }

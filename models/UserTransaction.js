@@ -37,9 +37,7 @@ class UserTransaction {
     }));
 
     const result = await collection.insertMany(data);
-    console.log(result.insertedIds, "result");
 
-    // Return an array of inserted IDs to match expected iterable return
     return result.insertedIds;
   }
 
@@ -63,22 +61,6 @@ class UserTransaction {
   static async getUserTransactionsbytransactionId(transactionId) {
     const pipeline = [
       { $match: { transactionId } },
-      // {
-      //   $lookup: {
-      //     from: "users",
-      //     localField: "userId",
-      //     foreignField: "_id",
-      //     as: "userTransaction",
-      //   },
-      // },
-      // {
-      //   $unwind: "$userTransaction",
-      // },
-      // {
-      //   $project: {
-      //     "userTransaction.password": 0,
-      //   },
-      // },
       {
         $sort: {
           createdAt: 1,

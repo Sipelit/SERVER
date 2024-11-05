@@ -53,7 +53,6 @@ Ensure all monetary values are formatted as numbers without currency symbols. Re
 `;
       try {
         const result = await model.generateContent(prompt);
-        console.log(JSON.parse(result.response.text().trim()));
 
         return JSON.parse(result.response.text().trim());
       } catch (error) {

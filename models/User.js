@@ -18,13 +18,10 @@ class User {
     const data = await collection.find().toArray();
     return data;
   }
-  
+
   static async getUserById(_id) {
-  
-    
     const data = await collection.findOne({ _id: new ObjectId(_id) });
-  
-    
+
     return data;
   }
 
@@ -33,8 +30,12 @@ class User {
     return data;
   }
 
-  static async getUserByInput(input) {
-    const data = await collection.findOne({ input });
+  static async getUserByUsername(username) {
+    const data = await collection.findOne({ username });
+    return data;
+  }
+  static async getUserByEmail(email) {
+    const data = await collection.findOne({ email });
     return data;
   }
 }
