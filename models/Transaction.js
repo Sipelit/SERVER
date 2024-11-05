@@ -7,34 +7,30 @@ const UserTransaction = require("./UserTransaction");
 const collection = db.collection("transactions");
 
 class Transaction {
-  static async getTransactions(userId) {
-    const pipeline = [
-      { $match: { userId: new ObjectId(userId) } },
-      // {
-      //   $lookup: {
-      //     from: "users",
-      //     localField: "userId",
-      //     foreignField: "_id",
-      //     as: "transactionOfUser",
-      //   },
-      // },
-      // {
-      //   $unwind: {
-      //     path: "$transactionOfUser",
-      //   },
-      // },
-      // {
-      //   $project: {
-      //     "transactionOfUser.password": 0,
-      //   },
-      // },
-      {
-        $sort: {
-          createdAt: -1,
+  static async getTransactions(userId, name) {
+    let data;
+    if (!name) {
+      const pipeline = [
+        { $match: { userId: new ObjectId(userId) } },
+        {
+          $sort: {
+            createdAt: -1,
+          },
         },
-      },
-    ];
-    const data = await collection.aggregate(pipeline).toArray();
+      ];
+      data = await collection.aggregate(pipeline).toArray();
+    } else {
+      data = await collection
+        .find({
+          userId: new ObjectId(userId),
+          name: { $regex: name, $options: "i" },
+        },{
+          $sort: {
+            createdAt: -1,
+          },
+        },)
+        .toArray();
+    }
 
     return data;
   }
@@ -109,23 +105,19 @@ class Transaction {
           as: "usersTransactions",
         },
       },
-
-      // {
-      //   $unwind: {
-      //     path: "$usersTransactions",
-      //   },
-      // },
     ];
     const data = await collection.aggregate(pipeline).toArray();
 
     return data;
   }
   static async getTransactionByName(name, userId) {
-    const data = await collection.find({ 
-      userId: new ObjectId (userId), 
-      name: { $regex: name, $options: "i" }  // 'i' option makes the search case-insensitive
-    }).toArray();
- 
+    const data = await collection
+      .find({
+        userId: new ObjectId(userId),
+        name: { $regex: name, $options: "i" },
+      })
+      .toArray();
+
     return data;
   }
 }

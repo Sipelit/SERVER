@@ -33,8 +33,8 @@ class User {
     return data;
   }
 
-  static async getUserByUsername(username) {
-    const data = await collection.findOne({ username });
+  static async getUserByInput(input) {
+    const data = await collection.findOne({ input });
     return data;
   }
 }

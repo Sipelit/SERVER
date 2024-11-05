@@ -18,12 +18,12 @@ type Item {
   name: String
   price: Float
   quantity: Int
-  totalPrice: Float
+  totalPrice: Int
 }
 type Query {
-getTransactions(userId:ID): [Transaction]
+getTransactions(userId:ID, name: String): [Transaction]
 getTransactionById(_id: ID): Transaction 
-getrecipe(_id: ID): Transaction
+getReceipt(_id: ID): Transaction
 getTransactionByName(name: String): [Transaction]
 
 }
@@ -63,29 +63,36 @@ const transactionResolvers = {
   Query: {
     getTransactions: async (_, args, contextValue) => {
       await contextValue.authentication();
-      await redis.del(CACHE_POST); // nyalain selama dev
+      await redis.del(CACHE_POST);
       const cache = await redis.get(CACHE_POST);
       if (cache) {
         return JSON.parse(cache);
       }
 
-      const data = await Transaction.getTransactions(args.userId);
+      const data = await Transaction.getTransactions(args.userId, args.name);
 
       await redis.set(CACHE_POST, JSON.stringify(data));
       return data;
     },
     getTransactionById: async (_, args, contextValue) => {
       await contextValue.authentication();
-
-      const data = await Transaction.getTransactionById(args._id);
+      const _id = args._id;
+      const data = await Transaction.getTransactionById(_id);
       return data;
     },
-    getrecipe: async (_, args, contextValue) => {
-      await contextValue.authentication();
-      const transactionId = args.transactionId;
+    getTransactionByName: async (_, args, contextValue) => {
+      const { user } = await contextValue.authentication();
+      const name = args.name;
+      const data = await Transaction.getTransactionByName(name, user._id);
 
-      const data = await Transaction.getReceipt(transactionId);
-      console.log(data[0]);
+      return data;
+    },
+    getReceipt: async (_, args, contextValue) => {
+      await contextValue.authentication();
+      const _id = args._id;
+      console.log(args._id, "args");
+
+      const data = await Transaction.getReceipt(_id);
 
       return data;
     },
@@ -96,8 +103,6 @@ const transactionResolvers = {
       const { user } = await contextValue.authentication();
 
       const { name, category, items, totalPrice, tax } = args;
-      console.log(args);
-
       if (!name) throw new Error("Transaction name is required.");
       if (!category) throw new Error("Category is required.");
       if (!Array.isArray(items) || items.length === 0) {
@@ -122,13 +127,13 @@ const transactionResolvers = {
     updateTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
 
-      const { _id, name, items, totalPrice, category } = args;
+      const { _id, name, items, totalPrice, catagory } = args;
       const data = await Transaction.updateTransaction(
         _id,
         name,
         items,
         totalPrice,
-        category
+        catagory
       );
 
       return data;

@@ -71,6 +71,8 @@ const userResolvers = {
       if (!username) {
         throw new Error("Username is required");
       }
+      const getUsername = await User.getUserByInput(username);
+      if (getUsername) throw new Error("Username already exists");
 
       if (!email) {
         throw new Error("Email is required");
@@ -79,6 +81,9 @@ const userResolvers = {
       if (!isEmail(email)) {
         throw new Error("Email is invalid");
       }
+
+      const getEmail = await User.getUserByInput(username);
+      if (getEmail) throw new Error("Email already exists");
 
       if (!password) {
         throw new Error("Password is required");
@@ -106,7 +111,7 @@ const userResolvers = {
         throw new Error("Password is required");
       }
 
-      const getUsername = await User.getUserByUsername(username);
+      const getUsername = await User.getUserByInput(username);
       if (!getUsername) {
         throw new Error("Invalid username or password");
       }
