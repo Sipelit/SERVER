@@ -23,7 +23,8 @@ type Item {
 type Query {
 getTransactions(userId:ID): [Transaction]
 getTransactionById(_id: ID): Transaction 
-getReceipt(transactionId: ID): Transaction
+getrecipe(_id: ID): Transaction
+getTransactionByName(name: String): [Transaction]
 
 }
 type Mutation {
@@ -79,7 +80,7 @@ const transactionResolvers = {
       const data = await Transaction.getTransactionById(args._id);
       return data;
     },
-    getReceipt: async (_, args, contextValue) => {
+    getrecipe: async (_, args, contextValue) => {
       await contextValue.authentication();
       const transactionId = args.transactionId;
 

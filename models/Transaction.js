@@ -120,5 +120,13 @@ class Transaction {
 
     return data;
   }
+  static async getTransactionByName(name, userId) {
+    const data = await collection.find({ 
+      userId: new ObjectId (userId), 
+      name: { $regex: name, $options: "i" }  // 'i' option makes the search case-insensitive
+    }).toArray();
+ 
+    return data;
+  }
 }
 module.exports = Transaction;
