@@ -24,6 +24,7 @@ type Query {
 getTransactions(userId:ID): [Transaction]
 getTransactionById(_id: ID): Transaction 
 getrecipe(_id: ID): Transaction
+getTransactionByName(name: String): [Transaction]
 
 }
 type Mutation {
@@ -76,6 +77,14 @@ const transactionResolvers = {
       await contextValue.authentication();
       const _id = args._id;
       const data = await Transaction.getTransactionById(_id);
+      return data;
+    },
+    getTransactionByName: async (_, args, contextValue) => {
+      const {user} = await contextValue.authentication();
+      const name = args.name;
+      const data = await Transaction.getTransactionByName(name,user._id);
+      
+      
       return data;
     },
     getrecipe: async (_, args, contextValue) => {
