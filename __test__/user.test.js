@@ -95,7 +95,7 @@ describe("User Model", () => {
     expect(user.username).toBe("johndoe");
   });
 
-  test("should get user by username", async () => {
+  test("should get user by name", async () => {
     const newUser = {
       name: "John Doe",
       username: "johndoe",
@@ -103,12 +103,11 @@ describe("User Model", () => {
       password: hashPass("password123"),
     };
     await User.register(newUser);
-    const user = await User.getUserByUsername("johndoe");
+    const user = await User.getUserByName(newUser.name);
     expect(user).toBeTruthy();
     expect(user.username).toBe("johndoe");
   });
 
-  // Add this test case for invalid login
   test("should fail to login with incorrect password", async () => {
     const newUser = {
       name: "John Doe",
@@ -121,11 +120,8 @@ describe("User Model", () => {
     expect(user).toBeFalsy();
   });
 
-  // Add this test case for user not found
   test("should fail to login with non-existent username", async () => {
     const user = await User.login("nonexistentuser", "password123");
     expect(user).toBeFalsy();
   });
-
-  
 });
