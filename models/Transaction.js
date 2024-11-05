@@ -41,8 +41,9 @@ class Transaction {
 
   static async getTransactionById(_id) {
     const transaction = await collection.findOne({
-      _id: new ObjectId(String(_id)),
+      _id: new ObjectId(_id),
     });
+
     transaction.userTransaction =
       await UserTransaction.getUserTransactionsbytransactionId(transaction._id);
 
@@ -70,14 +71,14 @@ class Transaction {
     };
   }
 
-  static async updateTransaction(_id, name, items, totalPrice, catagory) {
+  static async updateTransaction(_id, name, items, totalPrice, category) {
     const data = await collection.updateOne(
       { _id: new ObjectId(String(_id)) },
       {
         $set: {
           name,
           items,
-          catagory,
+          category,
           totalPrice,
         },
       }
@@ -97,25 +98,26 @@ class Transaction {
     return data;
   }
 
-  static async getrecipe(transactionId) {
+  static async getReceipt(transactionId) {
     const pipeline = [
-      { $match: { transactionId: new ObjectId(transactionId) } },
+      { $match: { _id: new ObjectId(transactionId) } },
       {
         $lookup: {
           from: "UserTransaction",
-          localField: "transactionId",
-          foreignField: "_id",
+          localField: "userTransaction",
+          foreignField: "transactionId",
           as: "usersTransactions",
         },
       },
-      {
-        $unwind: {
-          path: "$usersTransactions",
-        },
-      },
+
+      // {
+      //   $unwind: {
+      //     path: "$usersTransactions",
+      //   },
+      // },
     ];
     const data = await collection.aggregate(pipeline).toArray();
-    
+
     return data;
   }
 }

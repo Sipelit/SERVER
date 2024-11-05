@@ -1,4 +1,3 @@
-
 const UserTransaction = require("../models/UserTransaction");
 
 const userTransactionTypeDefs = `#graphql
@@ -6,7 +5,7 @@ type UserTransaction {
   _id: ID
   name: String
   items: [Item]
-  totalPrice: Int
+  totalPrice: Float
   userId: ID
   transactionId:ID
   createdAt: String
@@ -95,22 +94,18 @@ const userTransactionResolvers = {
     createUserTransactionMany: async (_, args, contextValue) => {
       await contextValue.authentication();
       const { userTransactions } = args;
-  
+
       if (!Array.isArray(userTransactions)) {
-          throw new Error("userTransactions must be an array");
+        throw new Error("userTransactions must be an array");
       }
-  // console.log(userTransactions, "userTransactions");
-  
-       await UserTransaction.createManyUserTransaction(userTransactions);
+      // console.log(userTransactions, "userTransactions");
 
- 
-  
+      await UserTransaction.createManyUserTransaction(userTransactions);
+
       // Ensure that the return value is iterable
-      return "Succesfully Created"  // Wrap in array if not already
+      return "Succesfully Created"; // Wrap in array if not already
+    },
 
-  },
-  
-   
     updateUserTransaction: async (_, args, contextValue) => {
       await contextValue.authentication();
       const { _id, name, items, totalPrice, userId } = args;
