@@ -19,12 +19,8 @@ class User {
     return data;
   }
   
-  static async getUserById(_id) {
-  
-    
+  static async getUserById(_id) {   
     const data = await collection.findOne({ _id: new ObjectId(_id) });
-  
-    
     return data;
   }
 
